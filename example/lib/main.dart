@@ -85,7 +85,30 @@ List<Middleware<AppState>> counterMiddleware() {
   ];
 }
 
+class PushAction {}
+
+final InjectableMiddleware<AppState, GlobalKey<NavigatorState>>
+    navigatorMiddleware =
+    InjectableMiddleware<AppState, GlobalKey<NavigatorState>>(
+  builders: [
+    InjectableMiddlewareBuilder<AppState, PushAction,
+        GlobalKey<NavigatorState>>(
+      callback: (dependency, store, action, next) {
+        showDialog<void>(
+          context: dependency.currentState.overlay.context,
+          builder: (context) {
+            return const AlertDialog(
+              content: Text('Injectable'),
+            );
+          },
+        );
+      },
+    ),
+  ],
+);
+
 void main() {
+  final navigatorKey = GlobalKey<NavigatorState>();
   runApp(
     StoreProvider<AppState>(
       store: Store<AppState>(
@@ -100,6 +123,7 @@ void main() {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
+        navigatorKey: navigatorKey,
         home: const HomePage(),
       ),
     ),
