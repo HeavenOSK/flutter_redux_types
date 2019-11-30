@@ -1,111 +1,155 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'package:redux_types/redux_types.dart';
 
-void main() => runApp(MyApp());
+/// AppState which has only counter value.
+@immutable
+class AppState {
+  const AppState._({
+    this.counter,
+  });
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+  factory AppState.initialize() {
+    return const AppState._(
+      counter: 0,
     );
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  final int counter;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  AppState copyWith({
+    int counter,
+  }) {
+    return AppState._(
+      counter: counter ?? this.counter,
+    );
   }
 
   @override
+  String toString() => 'AppState{'
+      'counter:$counter'
+      '}';
+}
+
+/// Actions
+class IncrementAction {}
+
+class DecrementAction {}
+
+/// Reducers
+final Reducer<AppState> appReducer = combineReducers(
+  [
+    /// An example of using [ReducerOf]. It provides you
+    /// an ease of writing by IDE support and readability.
+    ReducerOf<AppState, IncrementAction>(
+      callback: (state, action) {
+        return state.copyWith(
+          counter: state.counter + 1,
+        );
+      },
+    ),
+
+    /// An example of using [TypeReducer]. It's hard to write
+    /// parameters because IDE doesn't know about [TypedReducer].
+    TypedReducer<AppState, DecrementAction>(
+      (state, action) {
+        return state.copyWith(
+          counter: state.counter - 1,
+        );
+      },
+    ),
+  ],
+);
+
+/// Middleware
+List<Middleware<AppState>> counterMiddleware() {
+  return [
+    /// An example of using [MiddlewareOf]. It provides you
+    /// an ease of writing by IDE support and readability.
+    MiddlewareOf<AppState, IncrementAction>(
+      callback: (store, action, next) {
+        print('IncrementAction was called!');
+        next(action);
+      },
+    ),
+
+    /// An example of using [TypedMiddleware]. It's hard to write
+    /// parameters because IDE doesn't know about [TypedMiddleware].
+    TypedMiddleware<AppState, DecrementAction>(
+      (store, action, next) {
+        print('DecrementAction was called!');
+        next(action);
+      },
+    ),
+  ];
+}
+
+void main() {
+  runApp(
+    StoreProvider<AppState>(
+      store: Store<AppState>(
+        appReducer,
+        initialState: AppState.initialize(),
+        middleware: [
+          ...counterMiddleware(),
+        ],
+      ),
+      child: MaterialApp(
+        title: 'redux_util_demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const HomePage(),
+      ),
+    ),
+  );
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key key}) : super(key: key);
+
+  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final store = StoreProvider.of<AppState>(context);
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('redux_util_demo'),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
+          children: [
+            const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
+            StoreConnector<AppState, String>(
+              converter: (store) => store.state.counter.toString(),
+              builder: (context, count) {
+                return Text(
+                  count,
+                  style: Theme.of(context).textTheme.display1,
+                );
+              },
+            )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            onPressed: () => store.dispatch(IncrementAction()),
+            tooltip: 'Increment',
+            child: new Icon(Icons.plus_one),
+          ),
+          FloatingActionButton(
+            onPressed: () => store.dispatch(DecrementAction()),
+            tooltip: 'Decrement',
+            child: new Icon(Icons.exposure_neg_1),
+          ),
+        ],
+      ),
     );
   }
 }
