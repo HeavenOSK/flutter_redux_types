@@ -1,10 +1,10 @@
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
 
 /// A function which is executed when type matched of [MiddlewareOf].
-typedef MiddlewareCallback<S, T> = void Function(
-  Store<S> store,
-  T action,
+typedef MiddlewareCallback<State, Action> = void Function(
+  Store<State> store,
+  Action action,
   NextDispatcher next,
 );
 
@@ -12,18 +12,18 @@ typedef MiddlewareCallback<S, T> = void Function(
 ///
 /// This is fully inspired from [TypedMiddleware] and modified that statement
 /// for IDE support & readability.
-class MiddlewareOf<S, T> implements MiddlewareClass<S> {
+class MiddlewareOf<State, Action> implements MiddlewareClass<State> {
   const MiddlewareOf({
     @required this.callback,
   }) : assert(callback != null);
 
   /// A function which is executed when type matched.
-  final MiddlewareCallback<S, T> callback;
+  final MiddlewareCallback<State, Action> callback;
 
   /// Lets [MiddlewareOf] act as a function.
   @override
-  void call(Store<S> store, dynamic action, NextDispatcher next) {
-    if (action is T) {
+  void call(Store<State> store, dynamic action, NextDispatcher next) {
+    if (action is Action) {
       callback(store, action, next);
     } else {
       next(action);

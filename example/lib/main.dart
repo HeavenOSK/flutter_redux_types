@@ -38,7 +38,7 @@ class IncrementAction {}
 class DecrementAction {}
 
 /// Reducers
-final Reducer<AppState> appReducer = combineReducers(
+final appReducer = combineReducers<AppState>(
   [
     /// An example of using [ReducerOf]. It provides you
     /// an ease of writing by IDE support and readability.
@@ -85,17 +85,20 @@ List<Middleware<AppState>> counterMiddleware() {
   ];
 }
 
-class PushAction {}
+class Dependency extends Injectable {
+  Dependency(this.key);
 
-final InjectableMiddleware<AppState, GlobalKey<NavigatorState>>
-    navigatorMiddleware =
-    InjectableMiddleware<AppState, GlobalKey<NavigatorState>>(
+  final GlobalKey<NavigatorState> key;
+}
+
+class ShowDialogAction {}
+
+final navigatorMiddleware = InjectableMiddlewareOf<AppState, Dependency>(
   builders: [
-    InjectableMiddlewareBuilder<AppState, PushAction,
-        GlobalKey<NavigatorState>>(
+    InjectableMiddlewareBuilder<AppState, ShowDialogAction, Dependency>(
       callback: (dependency, store, action, next) {
         showDialog<void>(
-          context: dependency.currentState.overlay.context,
+          context: dependency.key.currentState.overlay.context,
           builder: (context) {
             return const AlertDialog(
               content: Text('Injectable'),
@@ -116,6 +119,7 @@ void main() {
         initialState: AppState.initialize(),
         middleware: [
           ...counterMiddleware(),
+          ...navigatorMiddleware(Dependency(navigatorKey)),
         ],
       ),
       child: MaterialApp(
@@ -169,6 +173,11 @@ class HomePage extends StatelessWidget {
           ),
           FloatingActionButton(
             onPressed: () => store.dispatch(DecrementAction()),
+            tooltip: 'Decrement',
+            child: new Icon(Icons.exposure_neg_1),
+          ),
+          FloatingActionButton(
+            onPressed: () => store.dispatch(ShowDialogAction()),
             tooltip: 'Decrement',
             child: new Icon(Icons.exposure_neg_1),
           ),
