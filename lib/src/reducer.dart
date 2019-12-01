@@ -1,28 +1,25 @@
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:redux/redux.dart';
 
 /// A function which is executed when type matched of [ReducerOf].
-typedef ReducerCallback<State, Action> = State Function(
-  State state,
-  Action action,
-);
+typedef ReducerCallback<S, T> = S Function(S state, T action);
 
 /// A Reducer class which provides type matching.
 ///
 /// This is fully inspired from [TypedReducer] and modified that statement
 /// for IDE support & readability.
-class ReducerOf<State, Action> implements ReducerClass<State> {
+class ReducerOf<S, T> implements ReducerClass<S> {
   const ReducerOf({
     @required this.callback,
   }) : assert(callback != null);
 
   /// A function which is executed when type matched.
-  final ReducerCallback<State, Action> callback;
+  final ReducerCallback<S, T> callback;
 
   /// Lets [ReducerOf] act as a function.
   @override
-  State call(State state, dynamic action) {
-    if (action is Action) {
+  S call(S state, dynamic action) {
+    if (action is T) {
       return callback(state, action);
     }
     return state;
