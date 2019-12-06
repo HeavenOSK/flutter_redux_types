@@ -1,6 +1,6 @@
 ## [0.2.0]
 
-add InjectionMiddleware 
+add InjectionMiddleware.
 
 ## [0.1.0] 
 
