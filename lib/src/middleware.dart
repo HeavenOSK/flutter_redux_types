@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
 
 /// A function which is executed when type matched of [MiddlewareOf].

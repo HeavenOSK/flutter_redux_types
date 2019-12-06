@@ -86,11 +86,12 @@ List<Middleware<AppState>> navigatorMiddleware(
         GlobalKey<NavigatorState>>(
       dependency: navigatorKey,
       callback: (state, action, next, key) {
+        print('ShowDialogAction was called!');
         showDialog<void>(
           context: key.currentState.overlay.context,
           builder: (context) {
             return const AlertDialog(
-              content: Text('Injectable'),
+              content: Text('Injection Middleware'),
             );
           },
         );

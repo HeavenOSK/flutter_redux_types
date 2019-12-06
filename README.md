@@ -9,11 +9,15 @@ This package is fully inspired from [Redux.dart](https://pub.dartlang.org/packag
   * Dart 2.2.3+
   * [Redux.dart](https://pub.dartlang.org/packages/redux) 3.0.0+.
 
-## Class 
+## Cleaned types of Redux
 These are more cleaned type matching classes for Redux than `TypedReducer` & `TypedMiddleware` of [Redux.dart](https://pub.dartlang.org/packages/redux). You can comfortably write type matching classes with IDE support like Android Studio.
 
   * `ReducerOf` - A Reducer class for type matching. It's better to write & read with IDE support.
   * `MiddlewareOf` - A Middleware class for type matching. It's better to write & read with IDE support.
+  
+## Middleware for dependency injection. 
+You can use a dependency in middleware with `InjectionMiddlewareOf`. 
+ 
   * `InjectionMiddlewareOf` - A Middleware class for type matching which can use an injected dependency. It's better to write & read with IDE support.
 
 ## Usage
