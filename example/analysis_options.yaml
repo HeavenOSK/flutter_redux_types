@@ -1,2 +1,4 @@
 include: package:pedantic_mono/analysis_options.yaml
-
+analyzer:
+  errors:
+    type_annotate_public_apis: ignore
