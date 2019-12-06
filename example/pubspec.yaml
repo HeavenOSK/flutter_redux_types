@@ -2,7 +2,7 @@ name: example
 description: A redux_types example
 version: 0.0.1
 author: Ryunosuke Watanabe <heavenosk@gmail.com>
-homepage: https://github.com/HeavenOSK/redux_types
+homepage: https://github.com/HeavenOSK/flutter_redux_types
 environment:
   sdk: ">=2.2.3 <3.0.0"
 dependencies:
