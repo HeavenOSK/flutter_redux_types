@@ -85,20 +85,16 @@ List<Middleware<AppState>> counterMiddleware() {
   ];
 }
 
-class Dependency extends Injectable {
-  Dependency(this.key);
-
-  final GlobalKey<NavigatorState> key;
-}
-
 class ShowDialogAction {}
 
-final navigatorMiddleware = InjectableMiddlewareOf<AppState, Dependency>(
-  builders: [
-    InjectableMiddlewareBuilder<AppState, ShowDialogAction, Dependency>(
-      callback: (dependency, store, action, next) {
+List<Middleware<AppState>> navigatorMiddleware(GlobalKey<NavigatorState> key) {
+  return [
+    InjectionMiddlewareOf<AppState, ShowDialogAction,
+        GlobalKey<NavigatorState>>(
+      dependency: key,
+      callback: (state, action, next, key) {
         showDialog<void>(
-          context: dependency.key.currentState.overlay.context,
+          context: key.currentState.overlay.context,
           builder: (context) {
             return const AlertDialog(
               content: Text('Injectable'),
@@ -107,8 +103,8 @@ final navigatorMiddleware = InjectableMiddlewareOf<AppState, Dependency>(
         );
       },
     ),
-  ],
-);
+  ];
+}
 
 void main() {
   final navigatorKey = GlobalKey<NavigatorState>();
@@ -119,7 +115,7 @@ void main() {
         initialState: AppState.initialize(),
         middleware: [
           ...counterMiddleware(),
-          ...navigatorMiddleware(Dependency(navigatorKey)),
+          ...navigatorMiddleware(navigatorKey),
         ],
       ),
       child: MaterialApp(
