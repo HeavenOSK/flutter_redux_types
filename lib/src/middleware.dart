@@ -2,6 +2,10 @@ import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
 
 /// A function which is executed when type matched of [MiddlewareOf].
+///
+/// * [S] is type of your [Store]'s state.
+/// * [A] is type of action which is matched.
+///
 typedef MiddlewareCallback<S, A> = void Function(
   Store<S> store,
   A action,
