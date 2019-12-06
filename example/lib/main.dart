@@ -37,11 +37,11 @@ class IncrementAction {}
 
 class DecrementAction {}
 
-/// Reducers
+class ShowDialogAction {}
+
+/// An example of using [ReducerOf].
 final appReducer = combineReducers<AppState>(
   [
-    /// An example of using [ReducerOf]. It provides you
-    /// an ease of writing by IDE support and readability.
     ReducerOf<AppState, IncrementAction>(
       callback: (state, action) {
         return state.copyWith(
@@ -49,11 +49,8 @@ final appReducer = combineReducers<AppState>(
         );
       },
     ),
-
-    /// An example of using [TypeReducer]. It's hard to write
-    /// parameters because IDE doesn't know about [TypedReducer].
-    TypedReducer<AppState, DecrementAction>(
-      (state, action) {
+    ReducerOf<AppState, DecrementAction>(
+      callback: (state, action) {
         return state.copyWith(
           counter: state.counter - 1,
         );
@@ -62,22 +59,17 @@ final appReducer = combineReducers<AppState>(
   ],
 );
 
-/// Middleware
+/// An example of using [MiddlewareOf].
 List<Middleware<AppState>> counterMiddleware() {
   return [
-    /// An example of using [MiddlewareOf]. It provides you
-    /// an ease of writing by IDE support and readability.
     MiddlewareOf<AppState, IncrementAction>(
       callback: (store, action, next) {
         print('IncrementAction was called!');
         next(action);
       },
     ),
-
-    /// An example of using [TypedMiddleware]. It's hard to write
-    /// parameters because IDE doesn't know about [TypedMiddleware].
-    TypedMiddleware<AppState, DecrementAction>(
-      (store, action, next) {
+    MiddlewareOf<AppState, DecrementAction>(
+      callback: (store, action, next) {
         print('DecrementAction was called!');
         next(action);
       },
@@ -85,13 +77,14 @@ List<Middleware<AppState>> counterMiddleware() {
   ];
 }
 
-class ShowDialogAction {}
-
-List<Middleware<AppState>> navigatorMiddleware(GlobalKey<NavigatorState> key) {
+/// An example of using [InjectionMiddlewareOf].
+List<Middleware<AppState>> navigatorMiddleware(
+  GlobalKey<NavigatorState> navigatorKey,
+) {
   return [
     InjectionMiddlewareOf<AppState, ShowDialogAction,
         GlobalKey<NavigatorState>>(
-      dependency: key,
+      dependency: navigatorKey,
       callback: (state, action, next, key) {
         showDialog<void>(
           context: key.currentState.overlay.context,
@@ -165,17 +158,19 @@ class HomePage extends StatelessWidget {
           FloatingActionButton(
             onPressed: () => store.dispatch(IncrementAction()),
             tooltip: 'Increment',
-            child: new Icon(Icons.plus_one),
+            child: const Icon(Icons.plus_one),
           ),
+          const SizedBox(height: 8),
           FloatingActionButton(
             onPressed: () => store.dispatch(DecrementAction()),
             tooltip: 'Decrement',
-            child: new Icon(Icons.exposure_neg_1),
+            child: const Icon(Icons.exposure_neg_1),
           ),
+          const SizedBox(height: 8),
           FloatingActionButton(
             onPressed: () => store.dispatch(ShowDialogAction()),
             tooltip: 'Decrement',
-            child: new Icon(Icons.exposure_neg_1),
+            child: const Icon(Icons.flash_on),
           ),
         ],
       ),

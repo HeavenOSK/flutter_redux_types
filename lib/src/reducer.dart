@@ -8,6 +8,31 @@ typedef ReducerCallback<S, A> = S Function(S state, A action);
 ///
 /// This is fully inspired from [TypedReducer] and modified that statement
 /// for IDE support & readability.
+///
+/// * [S] is type of your [Store]'s state.
+/// * [A] is type of action which is matched.
+///
+/// # Usage
+///
+/// final appReducer = combineReducers<AppState>(
+///   [
+///     ReducerOf<AppState, IncrementAction>(
+///       callback: (state, action) {
+///         return state.copyWith(
+///           counter: state.counter + 1,
+///         );
+///       },
+///     ),
+///     ReducerOf<AppState, DecrementAction>(
+///       callback: (state, action) {
+///         return state.copyWith(
+///           counter: state.counter - 1,
+///         );
+///       },
+///     ),
+///   ],
+/// );
+///
 class ReducerOf<S, A> implements ReducerClass<S> {
   const ReducerOf({
     @required this.callback,

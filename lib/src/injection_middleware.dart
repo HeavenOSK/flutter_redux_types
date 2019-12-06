@@ -6,6 +6,7 @@ import 'package:redux/redux.dart';
 /// * [S] is type of your [Store]'s state.
 /// * [A] is type of action which is matched.
 /// * [D] is type of a dependency which is injected.
+///
 typedef InjectionMiddlewareCallback<S, A, D> = void Function(
   Store<S> store,
   A action,
@@ -25,24 +26,24 @@ typedef InjectionMiddlewareCallback<S, A, D> = void Function(
 /// # Usage
 ///
 /// List<Middleware<AppState>> navigatorMiddleware(
-///     GlobalKey<NavigatorState> key,
-///  ) {
-///  return [
-///    InjectionMiddlewareOf<AppState, ShowDialogAction,
-///        GlobalKey<NavigatorState>>(
-///      dependency: key,
-///      callback: (state, action, next, key) {
-///        showDialog<void>(
-///          context: key.currentState.overlay.context,
-///          builder: (context) {
+///  GlobalKey<NavigatorState> navigatorKey,
+/// ) {
+///   return [
+///     InjectionMiddlewareOf<AppState, ShowDialogAction,
+///         GlobalKey<NavigatorState>>(
+///       dependency: navigatorKey,
+///       callback: (state, action, next, key) {
+///         showDialog<void>(
+///           context: key.currentState.overlay.context,
+///           builder: (context) {
 ///            return const AlertDialog(
 ///              content: Text('Injectable'),
-///            );
-///          },
-///        );
-///      },
-///    ),
-///  ];
+///             );
+///           },
+///         );
+///       },
+///     ),
+///   ];
 /// }
 ///
 class InjectionMiddlewareOf<S, A, D> implements MiddlewareClass<S> {
