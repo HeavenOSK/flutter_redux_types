@@ -1,8 +1,8 @@
 name: redux_types
-description: A collction of types for development with Redux.
+description: A collction of types for development with Redux. You can use cleaned type matching Reducer & Middleware.
 version: 0.2.0
 author: Ryunosuke Watanabe <heavenosk@gmail.com>
-homepage: https://github.com/HeavenOSK/redux_types
+homepage: https://github.com/HeavenOSK/flutter_redux_types
 environment:
   sdk: ">=2.2.3 <3.0.0"
 dependencies:
