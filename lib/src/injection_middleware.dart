@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:redux/redux.dart';
 
 /// A callback for [InjectionMiddlewareOf].

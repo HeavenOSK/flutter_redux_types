@@ -6,7 +6,11 @@ homepage: https://github.com/HeavenOSK/flutter_redux_types
 environment:
   sdk: ">=2.2.3 <3.0.0"
 dependencies:
+  flutter:
+    sdk: flutter
   redux: ^3.0.0
-  meta: ^1.1.7
 dev_dependencies:
+  flutter_test:
+    sdk: flutter
   pedantic_mono: ^1.4.0
+flutter:
